@@ -65,7 +65,7 @@ Vagrant.configure(2) do |config|
         
     equo up && sudo equo u
     echo -5 | equo conf update
-    equo i docker vixie-cron
+    equo i docker vixie-cron git wget curl postfix
 
 
     systemctl enable docker
@@ -77,5 +77,6 @@ Vagrant.configure(2) do |config|
     systemctl enable vixie-cron
     systemctl start vixie-cron
     crontab /vagrant/crontab
+    echo "@@@@ Do docker login if necessary."
   SHELL
 end
