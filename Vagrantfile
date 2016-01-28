@@ -65,12 +65,12 @@ Vagrant.configure(2) do |config|
         
     equo up && sudo equo u
     echo -5 | equo conf update
-    equo i docker vixie-cron git wget curl postfix
-
+    equo i docker vixie-cron git wget curl
 
     systemctl enable docker
     systemctl start docker
     cp -rfv /vagrant/build.service /etc/systemd/system/
+    cp -rfv /vagrant/setup.sh /opt/setup.sh
     systemctl daemon-reload
     systemctl enable build
     systemctl start build

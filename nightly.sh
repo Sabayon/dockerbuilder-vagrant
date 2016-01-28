@@ -16,11 +16,33 @@ DOCKER_IMAGES_DIRS=(
 )
 VAGRANT_BRANCH="${VAGRANT_BRANCH:-$DOCKER_GIT_REPOSITORY_BRANCH}"
 EMAIL_NOTIFICATIONS="${EMAIL_NOTIFICATIONS:-mudler@sabayon.org}"
+MAILGUN_API_KEY="${MAILGUN_API_KEY}"
+MAILGUN_DOMAIN_NAME="${MAILGUN_DOMAIN_NAME}"
+MAILGUN_FROM="${MAILGUN_FROM:-Excited User <mailgun\@$MAILGUN_DOMAIN_NAME\>}"
+
+die() { echo "$@" 1>&2 ; exit 1; }
+send_email() {
+local $SUBJECT="${1:-Report}"
+local $TEXT="${2:-Something went wrong}"
+
+[ -z "$MAILGUN_API_KEY" ] && die "You have to set MAILGUN for error reporting"
+[ -z "$MAILGUN_DOMAIN_NAME" ] && die "You have to set MAILGUN for error reporting"
+[ -z "$MAILGUN_FROM" ] && die "You have to set MAILGUN for error reporting"
+
+curl -s --user "api:${MAILGUN_API_KEY}" \
+    https://api.mailgun.net/v3/$MAILGUN_DOMAIN_NAME/messages \
+     -F from=$MAILGUN_FROM \
+    -F to=$EMAIL_NOTIFICATIONS \
+    -F subject=$SUBJECT \
+    -F text=$TEXT
+
+}
+
 
 echo "Starting the show."
 
 [ -d /vagrant/repositories ] || mkdir -p /vagrant/repositories
-
+cd /vagrant/repositories 
 [ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || git clone $DOCKER_GIT_REPOSITORY
 
 pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
@@ -31,8 +53,8 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-			docker build --rm --no-cache . $DOCKER_NAMESPACE/$i || mutt -s "Failed when building $DOCKER_NAMESPACE/$i" $MAIL_NOTIFICATIONS
-			docker push $DOCKER_NAMESPACE/$i || mutt -s "Failed while pushing $DOCKER_NAMESPACE/$i" $EMAIL_NOTIFICATIONS
+			docker build --no-cache --rm -t $DOCKER_NAMESPACE/$i . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
+			docker push $DOCKER_NAMESPACE/$i || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
 		popd
 	done
 
@@ -44,3 +66,5 @@ pushd /vagrant
         git reset --hard $VAGRANT_BRANCH
 
 popd
+
+

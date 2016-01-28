@@ -3,7 +3,7 @@ Description=Startup build service
 
 [Service]
 Type=oneshot
-ExecStart=/vagrant/setup.sh
+ExecStart=/opt/setup.sh
 
 [Install]
 WantedBy=multi-user.target
