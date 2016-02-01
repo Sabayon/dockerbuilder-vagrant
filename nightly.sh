@@ -5,6 +5,7 @@ DOCKER_GIT_REPOSITORY="${DOCKER_GIT_REPOSITORY:-https://github.com/Sabayon/docke
 DOCKER_GIT_REPOSITORY_NAME="${DOCKER_GIT_REPOSITORY_NAME:-docker-armhfp}"
 DOCKER_GIT_REPOSITORY_BRANCH="${DOCKER_GIT_REPOSITORY_BRANCH:-origin/master}"
 DOCKER_NAMESPACE="${DOCKER_NAMESPACE:-sabayon}"
+DOCKER_NAMESPACE_PREFIX="${DOCKER_NAMESPACE_PREFIX}"
 DOCKER_IMAGES_DIRS=(
 	"armhfp"
 	"builder"
@@ -42,13 +43,15 @@ curl -s --user "api:${MAILGUN_API_KEY}" \
 echo "Starting the show."
 
 [ -d /vagrant/repositories ] || mkdir -p /vagrant/repositories
-cd /vagrant/repositories 
+
+cd /vagrant/repositories
+
 [ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || git clone $DOCKER_GIT_REPOSITORY
 
 pushd /vagrant
-	
+
 	send_email "Syncing builder scripts to the git repository" "Hey, building process just started, just a friendly advice. If you won't see any message from me about an error, everything went OK"
-        git fetch --all                                                                                                                                                                                                                                                         
+        git fetch --all
         git reset --hard $VAGRANT_BRANCH
 
 popd
@@ -61,8 +64,8 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-			docker build --rm -t $DOCKER_NAMESPACE/$i . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
-			docker push $DOCKER_NAMESPACE/$i || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
+			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
+			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
 		popd
 	done
 
