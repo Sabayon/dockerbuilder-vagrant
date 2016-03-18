@@ -63,8 +63,8 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
-			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
+			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
+			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
 		popd
 	done
 
