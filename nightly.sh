@@ -11,7 +11,7 @@ DOCKER_IMAGES_DIRS=(
 	"distccd"
 	"generic"
 	"odroid-x2-u-u2"
-	"raspberrypi2"
+	"rpi"
 	"udooneo"
 )
 VAGRANT_BRANCH="${VAGRANT_BRANCH:-$DOCKER_GIT_REPOSITORY_BRANCH}"
