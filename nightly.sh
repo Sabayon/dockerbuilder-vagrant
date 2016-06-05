@@ -57,6 +57,7 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 
 	git fetch --all
 	git reset --hard ${DOCKER_GIT_REPOSITORY_BRANCH}
+	git pull
 
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
