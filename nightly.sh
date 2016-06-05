@@ -6,7 +6,10 @@ DOCKER_GIT_REPOSITORY_NAME="${DOCKER_GIT_REPOSITORY_NAME:-docker-armhfp}"
 DOCKER_GIT_REPOSITORY_BRANCH="${DOCKER_GIT_REPOSITORY_BRANCH:-origin/master}"
 DOCKER_NAMESPACE="${DOCKER_NAMESPACE:-sabayon}"
 DOCKER_NAMESPACE_PREFIX="${DOCKER_NAMESPACE_PREFIX}"
+DOCKER_IMAGE_ARCH="${DOCKER_IMAGE_ARCH:-armhfp}"
+
 DOCKER_IMAGES_DIRS=(
+	"armhfp"
 	"builder"
 	"distccd"
 	"generic"
@@ -17,10 +20,6 @@ DOCKER_IMAGES_DIRS=(
 	"udooneo"
 )
 VAGRANT_BRANCH="${VAGRANT_BRANCH:-$DOCKER_GIT_REPOSITORY_BRANCH}"
-EMAIL_NOTIFICATIONS="${EMAIL_NOTIFICATIONS:-mudler@sabayon.org}"
-MAILGUN_API_KEY="${MAILGUN_API_KEY}"
-MAILGUN_DOMAIN_NAME="${MAILGUN_DOMAIN_NAME}"
-MAILGUN_FROM="${MAILGUN_FROM:-Excited User <mailgun\@$MAILGUN_DOMAIN_NAME\>}"
 IRC_IDENT="${IRC_IDENT:-bot sabayon builder}"
 IRC_NICK="${IRC_NICK:-SabDockerBuild}"
 IRC_CHANNEL="${IRC_CHANNEL:-#sabayon-infra}"
@@ -62,8 +61,15 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i"
-			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i"
+
+			[ "${DOCKER_IMAGE_ARCH}" == "$i" ] \
+			&& {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
+				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i";
+			} \
+			|| {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
+				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i"
+			}
+
 		popd
 	done
 
