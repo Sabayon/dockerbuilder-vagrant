@@ -11,6 +11,7 @@ DOCKER_IMAGES_DIRS=(
 	"distccd"
 	"generic"
 	"odroid-x2-u2"
+	"odroid-c2"
 	"rpi"
 	"rpi-mc"
 	"udooneo"
