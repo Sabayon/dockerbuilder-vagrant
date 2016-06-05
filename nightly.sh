@@ -10,8 +10,9 @@ DOCKER_IMAGES_DIRS=(
 	"builder"
 	"distccd"
 	"generic"
-	"odroid-x2-u-u2"
+	"odroid-x2-u2"
 	"rpi"
+	"rpi-mc"
 	"udooneo"
 )
 VAGRANT_BRANCH="${VAGRANT_BRANCH:-$DOCKER_GIT_REPOSITORY_BRANCH}"
