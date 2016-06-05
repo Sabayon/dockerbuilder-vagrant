@@ -21,25 +21,22 @@ EMAIL_NOTIFICATIONS="${EMAIL_NOTIFICATIONS:-mudler@sabayon.org}"
 MAILGUN_API_KEY="${MAILGUN_API_KEY}"
 MAILGUN_DOMAIN_NAME="${MAILGUN_DOMAIN_NAME}"
 MAILGUN_FROM="${MAILGUN_FROM:-Excited User <mailgun\@$MAILGUN_DOMAIN_NAME\>}"
+IRC_IDENT="${IRC_IDENT:-bot sabayon builder}"
+IRC_NICK="${IRC_NICK:-SabDockerBuild}"
+IRC_CHANNEL="${IRC_CHANNEL:-#sabayon-infra}"
 
 die() { echo "$@" 1>&2 ; exit 1; }
-send_email() {
-local SUBJECT="${1:-Report}"
-local TEXT="${2:-Something went wrong}"
+irc_msg() {
 
-[ -z "$MAILGUN_API_KEY" ] && die "You have to set MAILGUN for error reporting"
-[ -z "$MAILGUN_DOMAIN_NAME" ] && die "You have to set MAILGUN for error reporting"
-[ -z "$MAILGUN_FROM" ] && die "You have to set MAILGUN for error reporting"
+local IRC_MESSAGE="${1}"
 
-curl -s --user "api:${MAILGUN_API_KEY}" \
-    https://api.mailgun.net/v3/"$MAILGUN_DOMAIN_NAME"/messages \
-     -F from="$MAILGUN_FROM" \
-    -F to="$EMAIL_NOTIFICATIONS" \
-    -F subject="$SUBJECT" \
-    -F text="$TEXT"
+[ -z "$IRC_MESSAGE" ] && return 1
+[ -z "$IRC_CHANNEL" ] && return 1
+
+echo -e "USER ${IRC_IDENT}\nNICK ${IRC_NICK}${RANDOM}\nJOIN ${IRC_CHANNEL}\nPRIVMSG ${IRC_CHANNEL} :${IRC_MESSAGE}\nQUIT\n" \
+| nc irc.freenode.net 6667 > /dev/null || true
 
 }
-
 
 echo "Starting the show."
 
@@ -51,7 +48,6 @@ cd /vagrant/repositories
 
 pushd /vagrant
 
-	send_email "Syncing builder scripts to the git repository" "Hey, building process just started, just a friendly advice. If you won't see any message from me about an error, everything went OK"
         git fetch --all
         git reset --hard $VAGRANT_BRANCH
 
@@ -65,12 +61,9 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp . || send_email "Building error" "Failed when building $DOCKER_NAMESPACE/$i"
-			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp || send_email "Pushing error" "Failed while pushing $DOCKER_NAMESPACE/$i"
+			docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i"
+			docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-armhfp || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i"
 		popd
 	done
 
 popd
-
-
-

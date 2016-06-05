@@ -1,3 +1,7 @@
-1 0 * * * /vagrant/nightly.sh
-0 0 1 * * /vagrant/monthly.sh
+SHELL=/bin/bash
+PATH=/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin
+MAILTO=root
+HOME=/
 
+1 0 * * * flock -x /tmp/.buildlock -c /vagrant/nightly.sh
+0 0 1 * * flock -x /tmp/.buildlock -c /vagrant/monthly.sh

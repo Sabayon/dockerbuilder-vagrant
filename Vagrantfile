@@ -62,10 +62,10 @@ Vagrant.configure(2) do |config|
     mkdir -p /usr/portage/licenses/
     rsync -av -H -A -X --delete-during "rsync://rsync.at.gentoo.org/gentoo-portage/licenses/" "/usr/portage/licenses/"
     ls /usr/portage/licenses -1 | xargs -0 > /etc/entropy/packages/license.accept
-        
+
     equo up && sudo equo u
     echo -5 | equo conf update
-    equo i docker vixie-cron git wget curl
+    equo i docker vixie-cron git wget curl net-analyzer/netcat6
 
     systemctl enable docker
     systemctl start docker
