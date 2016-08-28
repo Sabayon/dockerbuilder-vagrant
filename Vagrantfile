@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
 
     equo up && sudo equo u
     echo -5 | equo conf update
-    equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs
+    equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs sys-fs/xfsprogs
     git lfs install
 
     systemctl enable docker
