@@ -41,9 +41,9 @@ echo "Starting the show."
 
 [ -d /vagrant/repositories ] || mkdir -p /vagrant/repositories
 
-cd /vagrant/repositories
 
-[ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || git clone $DOCKER_GIT_REPOSITORY
+
+[ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || pushd /vagrant/repositories && git clone $DOCKER_GIT_REPOSITORY && popd
 
 pushd /vagrant
 
@@ -61,7 +61,7 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 	for i in "${DOCKER_IMAGES_DIRS[@]}"
 	do
 		pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME/$i
-
+			irc_msg "Docker image building started for $i (${DOCKER_IMAGE_ARCH})"
 			[ "${DOCKER_IMAGE_ARCH}" == "$i" ] \
 			&& {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
 				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i";
@@ -69,6 +69,7 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 			|| {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} . || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
 				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i"
 			}
+			irc_msg "Docker image building finished for $i (${DOCKER_IMAGE_ARCH})"
 
 		popd
 	done
