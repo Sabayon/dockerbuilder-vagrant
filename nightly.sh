@@ -7,6 +7,8 @@ DOCKER_GIT_REPOSITORY_BRANCH="${DOCKER_GIT_REPOSITORY_BRANCH:-origin/master}"
 DOCKER_NAMESPACE="${DOCKER_NAMESPACE:-sabayon}"
 DOCKER_NAMESPACE_PREFIX="${DOCKER_NAMESPACE_PREFIX}"
 DOCKER_IMAGE_ARCH="${DOCKER_IMAGE_ARCH:-armhfp}"
+MOLECULES_REPO="${MOLECULES_REPO:-https://github.com/Sabayon/molecules-arm.git}"
+MOLECULES_REPO_NAME="${MOLECULES_REPO_NAME:-molecules-arm}"
 
 DOCKER_IMAGES_DIRS=(
 	"armhfp"
@@ -42,14 +44,13 @@ echo "Starting the show."
 
 [ -d /vagrant/repositories ] || mkdir -p /vagrant/repositories
 
-
-
 [ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || pushd /vagrant/repositories && git clone $DOCKER_GIT_REPOSITORY && popd
 
 pushd /vagrant
 
         git fetch --all
         git reset --hard $VAGRANT_BRANCH
+				[ -d /vagrant/repositories/$MOLECULES_REPO_NAME ] || git clone $MOLECULES_REPO
 
 popd
 
@@ -75,4 +76,13 @@ pushd /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME
 		popd
 	done
 
+popd
+
+pushd /vagrant/repositories/$MOLECULES_REPO_NAME
+
+	git fetch --all
+	git reset --hard origin/master
+	git pull
+	./build.sh
+	
 popd
