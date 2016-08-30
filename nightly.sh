@@ -46,11 +46,12 @@ echo "Starting the show."
 
 [ -d /vagrant/repositories/$DOCKER_GIT_REPOSITORY_NAME ] || pushd /vagrant/repositories && git clone $DOCKER_GIT_REPOSITORY && popd
 
+[ -d /vagrant/repositories/$MOLECULES_REPO_NAME ] || git clone $MOLECULES_REPO /vagrant/repositories/$MOLECULES_REPO_NAME
+
 pushd /vagrant
 
         git fetch --all
         git reset --hard $VAGRANT_BRANCH
-				[ -d /vagrant/repositories/$MOLECULES_REPO_NAME ] || git clone $MOLECULES_REPO
 
 popd
 
@@ -84,5 +85,5 @@ pushd /vagrant/repositories/$MOLECULES_REPO_NAME
 	git reset --hard origin/master
 	git pull
 	./build.sh
-	
+
 popd
