@@ -2,7 +2,7 @@
 export ACCEPT_LICENSE=*
 
 equo up && sudo equo u
-equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs sys-fs/xfsprogs docker-companion molecule-plugins molecule-core rysnc
+equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs sys-fs/xfsprogs docker-companion molecule-plugins molecule-core net-misc/rysnc
 echo -5 | equo conf update
 
 git lfs install
