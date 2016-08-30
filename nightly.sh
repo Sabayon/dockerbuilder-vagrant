@@ -21,7 +21,7 @@ DOCKER_IMAGES_DIRS=(
 )
 VAGRANT_BRANCH="${VAGRANT_BRANCH:-$DOCKER_GIT_REPOSITORY_BRANCH}"
 IRC_IDENT="${IRC_IDENT:-bot sabayon builder}"
-IRC_NICK="${IRC_NICK:-SabDockerBuild}"
+IRC_NICK="${IRC_NICK:-SabImg}"
 IRC_CHANNEL="${IRC_CHANNEL:-#sabayon-infra}"
 
 die() { echo "$@" 1>&2 ; exit 1; }
