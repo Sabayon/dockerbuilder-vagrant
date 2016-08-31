@@ -10,6 +10,8 @@ git lfs install
 cp -rfv /vagrant/confs/rsyncd.conf /etc/rsyncd.conf
 cp -rfv /vagrant/confs/nginx.conf /etc/nginx/nginx.conf
 sed -i 's:txt;:txt log;:g' /etc/nginx/mime.types
+mkdir /etc/nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -subj "/C=IT/ST=Italy/L=Internet/O=Sabayon/OU=Builders/CN=sabayon.org"
 
 systemctl enable rsyncd
 systemctl start rsyncd
