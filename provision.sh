@@ -2,7 +2,7 @@
 export ACCEPT_LICENSE=*
 
 equo up && sudo equo u
-equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs sys-fs/xfsprogs docker-companion molecule-plugins molecule-core net-misc/rysnc www-servers/nginx
+equo i docker vixie-cron git wget curl net-analyzer/netcat6 git-lfs e2fsprogs sys-fs/xfsprogs docker-companion molecule-plugins molecule-core net-misc/rysnc www-servers/nginx app-misc/sabayon-auto-updater
 echo -5 | equo conf update
 
 git lfs install
@@ -15,7 +15,8 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx
 
 systemctl enable rsyncd
 systemctl start rsyncd
-
+systemctl enable sabayon-auto-updater.timer
+systemctl start sabayon-auto-updater.timer
 systemctl enable docker
 systemctl start docker
 cp -rfv /vagrant/build.service /etc/systemd/system/
