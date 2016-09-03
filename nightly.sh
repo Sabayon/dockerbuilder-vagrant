@@ -12,7 +12,7 @@ MOLECULES_REPO_NAME="${MOLECULES_REPO_NAME:-molecules-arm}"
 REPOSITORIES_DIR="${REPOSITORIES_DIR:-/vagrant/repositories}"
 BUILD_DATE="$(date +%Y%m%d)"
 LOGS_DIR="$REPOSITORIES_DIR/$MOLECULES_REPO_NAME/images/logs/$BUILD_DATE"
-BASE_URL"${BASE_URL:-https://dockerbuilder.sabayon.org/}"
+BASE_URL="${BASE_URL:-https://dockerbuilder.sabayon.org/}"
 
 DOCKER_IMAGES_DIRS=(
 	"armhfp"
