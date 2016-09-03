@@ -12,6 +12,7 @@ MOLECULES_REPO_NAME="${MOLECULES_REPO_NAME:-molecules-arm}"
 REPOSITORIES_DIR="${REPOSITORIES_DIR:-/vagrant/repositories}"
 BUILD_DATE="$(date +%Y%m%d)"
 LOGS_DIR="$REPOSITORIES_DIR/$MOLECULES_REPO_NAME/images/logs/$BUILD_DATE"
+BASE_URL"${BASE_URL:-https://dockerbuilder.sabayon.org/}"
 
 DOCKER_IMAGES_DIRS=(
 	"armhfp"
@@ -72,12 +73,12 @@ pushd $REPOSITORIES_DIR/$DOCKER_GIT_REPOSITORY_NAME
 			irc_msg "Docker image building started for $i (${DOCKER_IMAGE_ARCH})"
 			[ "${DOCKER_IMAGE_ARCH}" == "$i" ] \
 			&& {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i . 1>&2 > $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
-				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i 1>&2 >> $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i";
+				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i 1>&2 >> $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log
 			} \
 			|| {	docker build --rm -t "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} . 1>&2 > $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log || irc_msg "Docker images Building error: Failed when building $DOCKER_NAMESPACE/$i";
-				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} 1>&2 >> $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log || irc_msg "Docker images Pushing error: Failed while pushing $DOCKER_NAMESPACE/$i"
+				docker push "$DOCKER_NAMESPACE_PREFIX"$DOCKER_NAMESPACE/$i-${DOCKER_IMAGE_ARCH} 1>&2 >> $LOGS_DIR/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log
 			}
-			irc_msg "Docker image building finished for $i (${DOCKER_IMAGE_ARCH})"
+			irc_msg "Docker image building finished for $i (${DOCKER_IMAGE_ARCH}) - ${BASE_URL}/logs/${BUILD_DATE}/${DOCKER_NAMESPACE_PREFIX}${DOCKER_NAMESPACE}-${i}.log"
 
 		popd
 	done
@@ -85,10 +86,10 @@ pushd $REPOSITORIES_DIR/$DOCKER_GIT_REPOSITORY_NAME
 popd
 
 pushd $REPOSITORIES_DIR/$MOLECULES_REPO_NAME
-
+	irc_msg "Building images"
 	git fetch --all
 	git reset --hard origin/master
 	git pull
 	./build.sh 1>&2 > $LOGS_DIR/$MOLECULES_REPO_NAME.log
-
+	irc_msg "Images building complete. ${BASE_URL}/logs/${BUILD_DATE}/$MOLECULES_REPO_NAME.log"
 popd
