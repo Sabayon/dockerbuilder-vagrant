@@ -19,6 +19,8 @@ DOCKER_IMAGES_DIRS=(
 	"odroid-c2"
 	"rpi"
 	"rpi-mc"
+	"rpi-mate"
+	"rpi-openrc"
 	"bananapi"
 	"builder"
 	"distccd"
