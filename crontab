@@ -5,3 +5,4 @@ HOME=/
 
 1 0 * * * flock -x /tmp/.buildlock -c /vagrant/nightly.sh
 0 0 1 * * flock -x /tmp/.buildlock -c /vagrant/monthly.sh
+5 12 * * 6 flock -x /tmp/.buildlock -c /vagrant/monthly.sh
