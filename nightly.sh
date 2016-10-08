@@ -33,6 +33,9 @@ IRC_IDENT="${IRC_IDENT:-Bot Sabayon Docker Builder}"
 IRC_NICK="${IRC_NICK:-Sab}"
 IRC_CHANNEL="${IRC_CHANNEL:-#sabayon-infra}"
 
+# update crontab
+crontab /vagrant/crontab
+
 die() { echo "$@" 1>&2 ; exit 1; }
 irc_msg() {
 
