@@ -25,6 +25,7 @@ DOCKER_IMAGES_DIRS=(
 	"builder"
 	"distccd"
 	"odroid-x2-u2"
+	"beaglebone-openrc"
 	"udooneo"
 	"generic"
 )
