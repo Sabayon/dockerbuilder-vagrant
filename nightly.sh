@@ -22,7 +22,6 @@ DOCKER_IMAGES_DIRS=(
 	"rpi-mate"
 	"rpi-openrc"
 	"bananapi"
-	"builder"
 	"distccd"
 	"odroid-x2-u2"
 	"odroid-c2-openrc"
